@@ -1,0 +1,6 @@
+input/
+intermediate/
+output*
+*.ipynb
+*.pdf
+random_CMB*
