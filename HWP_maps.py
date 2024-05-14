@@ -10,6 +10,13 @@ import pysm3.units as u
 
 import healpy as hp
 
+import sys
+
+sky = str(sys.argv[1])
+HWPbool = str(sys.argv[2])
+
+print('you are running HWP_maps.py for a '+sky+' sky, with HWP='+HWPbool+'.')
+
 import time
 start = time.time()
 
@@ -50,6 +57,7 @@ for telescope in ['LFT','MFT','HFT']:
 NSIDE = 64
 NPIX = 12*NSIDE**2
 
+### FIX FROM HERE (to reflect the changes at lines 15-16)
 CMB_sky = pysm3.Sky(nside=NSIDE, preset_strings=['c1'])
 dust_sky = pysm3.Sky(nside=NSIDE, preset_strings=['d1'])
 sync_sky = pysm3.Sky(nside=NSIDE, preset_strings=['s1'])
@@ -147,8 +155,6 @@ fig.tight_layout(pad=0)
 fig.set_size_inches(10.5, 7)
 plt.savefig('mueller.pdf')
 plt.clf()
-
-#UNTIL HERE!
 
 #Producing maps affected by the HWP, channel by channel.
 
