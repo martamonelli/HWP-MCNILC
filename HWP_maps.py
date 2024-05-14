@@ -54,9 +54,8 @@ CMB_sky = pysm3.Sky(nside=NSIDE, preset_strings=['c1'])
 dust_sky = pysm3.Sky(nside=NSIDE, preset_strings=['d1'])
 sync_sky = pysm3.Sky(nside=NSIDE, preset_strings=['s1'])
 
-#Loading data from IMO:
+# Specifying instrument specifics (PTEP paper):
 
-# list of all channels
 chan_dicts = np.array([{'telescope':'LFT', 'nu':40. , 'delta':12. , 'fwhm':70.5 , 'sensitivity':37.42, 'sigma_alpha':49.8},
                        {'telescope':'LFT', 'nu':50. , 'delta':15. , 'fwhm':58.5 , 'sensitivity':33.46, 'sigma_alpha':39.8},
                        {'telescope':'LFT', 'nu':60. , 'delta':14. , 'fwhm':51.1 , 'sensitivity':21.31, 'sigma_alpha':16.1},
@@ -79,70 +78,38 @@ chan_dicts = np.array([{'telescope':'LFT', 'nu':40. , 'delta':12. , 'fwhm':70.5 
                        {'telescope':'HFT', 'nu':280., 'delta':84. , 'fwhm':22.5 , 'sensitivity':13.80, 'sigma_alpha':6.8 },
                        {'telescope':'HFT', 'nu':337., 'delta':101., 'fwhm':20.9 , 'sensitivity':21.95, 'sigma_alpha':17.1},
                        {'telescope':'HFT', 'nu':402., 'delta':92. , 'fwhm':17.9 , 'sensitivity':47.45, 'sigma_alpha':80.0},
-                       ]) # WON'T WORK!
+                       ])
                        
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# opening IMO schema.json file and interpreting it as a dictionary
-f = open('input/schema.json',)
-data = json.load(f)  
 
-# looking into the IMO, data['data_files'] is where the relevant info is stored
-data_files = data['data_files']
+# Counting how many objects are in data_files
 
-# counting how many objects are in data_files
-nkey=0
-for key in data_files:
-    nkey = nkey+1
+nkey = len(chan_dicts)
 
 #Plotting the Mueller matrix elements channel by channel:
 
-fig, axs = plt.subplots(4, 4)
+fig, axs = plt.subplots(3, 3)
 
-for i in np.arange(len(chan_dicts)):
-    channel_IMO = chan_dicts[i]['IMO']
+for i in np.arange(nkey):
+    telescope = chan_dicts[i]['telescope']
     
-    if channel_IMO[0] == 'L':
+    if telescope == 'LFT':
         freqs = freqs_LFT 
         muellers = M_LFT
         c_string = 'crimson'
     
-    if channel_IMO[0] == 'M':
+    if telescope == 'MFT':
         freqs = freqs_MFT 
         muellers = M_MFT
         c_string = 'purple'
         
-    if channel_IMO[0] == 'H':
+    if telescope == 'HFT':
         freqs = freqs_HFT 
         muellers = M_HFT
         c_string = 'mediumslateblue'
 
-    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    # looking for the detectors belonging to the selected channel
-    for j in range(nkey):
-        test = data_files[j]
-        if(test['name'] == 'channel_info'):
-            metadata = test['metadata']
-            if(metadata['channel'] == channel_IMO):
-                detector_names = metadata['detector_names']
-                break
-
-    nIMO = len(detector_names)
-    det_indices = range(nIMO)
-
-    list_of_dictionaries = []
-
-    # looking for the metadata of the detectors in detector_names
-    for d in detector_names:
-        for j in range(nkey):
-            test = data_files[j]
-            if(test['name'] == 'detector_info'):
-                metadata = test['metadata']
-                if (metadata['name'] == d):
-                    list_of_dictionaries.append(metadata)
-                    break
-                    
-    bandcenter = list_of_dictionaries[0]['bandcenter_ghz']*1e9 #[Hz]
-    bandwidth = list_of_dictionaries[0]['bandwidth_ghz']*1e9   #[Hz]
+    bandcenter = chan_dicts[i]['nu']*1e9   #[Hz]
+    bandwidth = chan_dicts[i]['delta']*1e9 #[Hz]
     
     fmin = bandcenter - bandwidth/2
     fmax = bandcenter + bandwidth/2
@@ -158,10 +125,10 @@ for i in np.arange(len(chan_dicts)):
             label = string
         return label
     
-    for s1 in np.arange(4):
-        for s2 in np.arange(4):
+    for s1 in np.arange(3):
+        for s2 in np.arange(3):
             axs[s1,s2].axhline(default[s1,s2],color='gray')
-            axs[s1,s2].plot(freqs_channel*1e-9,muellers[bandidx,s1,s2][0],color=c_string,label=label_cond(channel_IMO[0]+'FT'))
+            axs[s1,s2].plot(freqs_channel*1e-9,muellers[bandidx,s1,s2][0],color=c_string,label=label_cond(telescope))
             axs[s1,s2].tick_params(direction='in')
             axs[s1,s2].set_xticks([100,200,300,400])
             if s1 != 3:
@@ -181,20 +148,22 @@ fig.set_size_inches(10.5, 7)
 plt.savefig('mueller.pdf')
 plt.clf()
 
+#UNTIL HERE!
+
 #Producing maps affected by the HWP, channel by channel.
 
 for i in np.arange(len(chan_dicts)):
-    channel_IMO = chan_dicts[i]['IMO']
+    channel_IMO = chan_dicts[i]['telescope']
     
-    if channel_IMO[0] == 'L':
+    if channel_IMO[0] == 'LFT':
         freqs = freqs_LFT 
         muellers = M_LFT
     
-    if channel_IMO[0] == 'M':
+    if channel_IMO[0] == 'MFT':
         freqs = freqs_MFT 
         muellers = M_MFT
         
-    if channel_IMO[0] == 'H':
+    if channel_IMO[0] == 'HFT':
         freqs = freqs_HFT 
         muellers = M_HFT
     
