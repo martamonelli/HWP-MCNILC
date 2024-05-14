@@ -47,7 +47,7 @@ for telescope in ['LFT','MFT','HFT']:
 
 #Introducing the maps/sky models:
 
-NSIDE = 512
+NSIDE = 64
 NPIX = 12*NSIDE**2
 
 CMB_sky = pysm3.Sky(nside=NSIDE, preset_strings=['c1'])
@@ -56,30 +56,30 @@ sync_sky = pysm3.Sky(nside=NSIDE, preset_strings=['s1'])
 
 #Loading data from IMO:
 
-# list of LiteBIRD channels
-chan_dicts = np.array([{'IMO':'L1-040'},
-                       {'IMO':'L2-050'},
-                       {'IMO':'L1-060'},
-                       {'IMO':'L3-068'},
-                       {'IMO':'L2-068'},
-                       {'IMO':'L4-078'},
-                       {'IMO':'L1-078'},
-                       {'IMO':'L3-089'},
-                       {'IMO':'L2-089'},
-                       {'IMO':'L4-100'},
-                       {'IMO':'L3-119'},
-                       {'IMO':'L4-140'},
-                       {'IMO':'M1-100'},
-                       {'IMO':'M2-119'},
-                       {'IMO':'M1-140'},
-                       {'IMO':'M2-166'},
-                       {'IMO':'M1-195'},
-                       {'IMO':'H1-195'},
-                       {'IMO':'H2-235'},
-                       {'IMO':'H1-280'},
-                       {'IMO':'H2-337'},
-                       {'IMO':'H3-402'},
-                       ])
+# list of all channels
+chan_dicts = np.array([{'telescope':'LFT', 'nu':40. , 'delta':12. , 'fwhm':70.5 , 'sensitivity':37.42, 'sigma_alpha':49.8},
+                       {'telescope':'LFT', 'nu':50. , 'delta':15. , 'fwhm':58.5 , 'sensitivity':33.46, 'sigma_alpha':39.8},
+                       {'telescope':'LFT', 'nu':60. , 'delta':14. , 'fwhm':51.1 , 'sensitivity':21.31, 'sigma_alpha':16.1},
+                       {'telescope':'LFT', 'nu':68. , 'delta':16. , 'fwhm':41.6 , 'sensitivity':19.91, 'sigma_alpha':1.09},
+                       {'telescope':'LFT', 'nu':68. , 'delta':16. , 'fwhm':47.1 , 'sensitivity':31.77, 'sigma_alpha':35.9},
+                       {'telescope':'LFT', 'nu':78. , 'delta':18. , 'fwhm':36.9 , 'sensitivity':15.55, 'sigma_alpha':8.6 },
+                       {'telescope':'LFT', 'nu':78. , 'delta':18. , 'fwhm':43.8 , 'sensitivity':19.13, 'sigma_alpha':13.0},
+                       {'telescope':'LFT', 'nu':89. , 'delta':20. , 'fwhm':33.0 , 'sensitivity':12.28, 'sigma_alpha':5.4 },
+                       {'telescope':'LFT', 'nu':89. , 'delta':20. , 'fwhm':41.5 , 'sensitivity':28.77, 'sigma_alpha':29.4},
+                       {'telescope':'LFT', 'nu':100., 'delta':23. , 'fwhm':30.2 , 'sensitivity':10.34, 'sigma_alpha':3.8 },
+                       {'telescope':'MFT', 'nu':100., 'delta':23. , 'fwhm':37.8 , 'sensitivity':8.48 , 'sigma_alpha':2.6 },
+                       {'telescope':'LFT', 'nu':119., 'delta':36. , 'fwhm':26.3 , 'sensitivity':7.69 , 'sigma_alpha':2.1 },
+                       {'telescope':'MFT', 'nu':119., 'delta':36. , 'fwhm':33.6 , 'sensitivity':5.70 , 'sigma_alpha':1.2 },
+                       {'telescope':'LFT', 'nu':140., 'delta':42. , 'fwhm':23.7 , 'sensitivity':7.25 , 'sigma_alpha':1.8 },
+                       {'telescope':'MFT', 'nu':140., 'delta':42. , 'fwhm':30.8 , 'sensitivity':6.38 , 'sigma_alpha':1.5 },
+                       {'telescope':'MFT', 'nu':166., 'delta':50. , 'fwhm':28.9 , 'sensitivity':5.57 , 'sigma_alpha':1.1 },
+                       {'telescope':'MFT', 'nu':195., 'delta':59. , 'fwhm':28.0 , 'sensitivity':7.05 , 'sigma_alpha':1.8 },
+                       {'telescope':'HFT', 'nu':195., 'delta':59. , 'fwhm':28.6 , 'sensitivity':10.50, 'sigma_alpha':3.9 },
+                       {'telescope':'HFT', 'nu':235., 'delta':71. , 'fwhm':24.7 , 'sensitivity':10.79, 'sigma_alpha':4.1 },
+                       {'telescope':'HFT', 'nu':280., 'delta':84. , 'fwhm':22.5 , 'sensitivity':13.80, 'sigma_alpha':6.8 },
+                       {'telescope':'HFT', 'nu':337., 'delta':101., 'fwhm':20.9 , 'sensitivity':21.95, 'sigma_alpha':17.1},
+                       {'telescope':'HFT', 'nu':402., 'delta':92. , 'fwhm':17.9 , 'sensitivity':47.45, 'sigma_alpha':80.0},
+                       ]) # WON'T WORK!
                        
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # opening IMO schema.json file and interpreting it as a dictionary
