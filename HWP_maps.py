@@ -56,28 +56,28 @@ sync_sky = pysm3.Sky(nside=NSIDE, preset_strings=['s1'])
 
 # Specifying instrument specifics (PTEP paper):
 
-chan_dicts = np.array([{'telescope':'LFT', 'nu':40. , 'delta':12. , 'fwhm':70.5 , 'sensitivity':37.42, 'sigma_alpha':49.8},
-                       {'telescope':'LFT', 'nu':50. , 'delta':15. , 'fwhm':58.5 , 'sensitivity':33.46, 'sigma_alpha':39.8},
-                       {'telescope':'LFT', 'nu':60. , 'delta':14. , 'fwhm':51.1 , 'sensitivity':21.31, 'sigma_alpha':16.1},
-                       {'telescope':'LFT', 'nu':68. , 'delta':16. , 'fwhm':41.6 , 'sensitivity':19.91, 'sigma_alpha':1.09},
-                       {'telescope':'LFT', 'nu':68. , 'delta':16. , 'fwhm':47.1 , 'sensitivity':31.77, 'sigma_alpha':35.9},
-                       {'telescope':'LFT', 'nu':78. , 'delta':18. , 'fwhm':36.9 , 'sensitivity':15.55, 'sigma_alpha':8.6 },
-                       {'telescope':'LFT', 'nu':78. , 'delta':18. , 'fwhm':43.8 , 'sensitivity':19.13, 'sigma_alpha':13.0},
-                       {'telescope':'LFT', 'nu':89. , 'delta':20. , 'fwhm':33.0 , 'sensitivity':12.28, 'sigma_alpha':5.4 },
-                       {'telescope':'LFT', 'nu':89. , 'delta':20. , 'fwhm':41.5 , 'sensitivity':28.77, 'sigma_alpha':29.4},
-                       {'telescope':'LFT', 'nu':100., 'delta':23. , 'fwhm':30.2 , 'sensitivity':10.34, 'sigma_alpha':3.8 },
-                       {'telescope':'MFT', 'nu':100., 'delta':23. , 'fwhm':37.8 , 'sensitivity':8.48 , 'sigma_alpha':2.6 },
-                       {'telescope':'LFT', 'nu':119., 'delta':36. , 'fwhm':26.3 , 'sensitivity':7.69 , 'sigma_alpha':2.1 },
-                       {'telescope':'MFT', 'nu':119., 'delta':36. , 'fwhm':33.6 , 'sensitivity':5.70 , 'sigma_alpha':1.2 },
-                       {'telescope':'LFT', 'nu':140., 'delta':42. , 'fwhm':23.7 , 'sensitivity':7.25 , 'sigma_alpha':1.8 },
-                       {'telescope':'MFT', 'nu':140., 'delta':42. , 'fwhm':30.8 , 'sensitivity':6.38 , 'sigma_alpha':1.5 },
-                       {'telescope':'MFT', 'nu':166., 'delta':50. , 'fwhm':28.9 , 'sensitivity':5.57 , 'sigma_alpha':1.1 },
-                       {'telescope':'MFT', 'nu':195., 'delta':59. , 'fwhm':28.0 , 'sensitivity':7.05 , 'sigma_alpha':1.8 },
-                       {'telescope':'HFT', 'nu':195., 'delta':59. , 'fwhm':28.6 , 'sensitivity':10.50, 'sigma_alpha':3.9 },
-                       {'telescope':'HFT', 'nu':235., 'delta':71. , 'fwhm':24.7 , 'sensitivity':10.79, 'sigma_alpha':4.1 },
-                       {'telescope':'HFT', 'nu':280., 'delta':84. , 'fwhm':22.5 , 'sensitivity':13.80, 'sigma_alpha':6.8 },
-                       {'telescope':'HFT', 'nu':337., 'delta':101., 'fwhm':20.9 , 'sensitivity':21.95, 'sigma_alpha':17.1},
-                       {'telescope':'HFT', 'nu':402., 'delta':92. , 'fwhm':17.9 , 'sensitivity':47.45, 'sigma_alpha':80.0},
+chan_dicts = np.array([{'telescope':'LFT', 'nu':40. , 'delta':12. , 'fwhm':70.5 , 'sensitivity':37.42, 'sigma_alpha':49.8, 'name':'L040' },
+                       {'telescope':'LFT', 'nu':50. , 'delta':15. , 'fwhm':58.5 , 'sensitivity':33.46, 'sigma_alpha':39.8, 'name':'L050' },
+                       {'telescope':'LFT', 'nu':60. , 'delta':14. , 'fwhm':51.1 , 'sensitivity':21.31, 'sigma_alpha':16. , 'name':'L060' },
+                       {'telescope':'LFT', 'nu':68. , 'delta':16. , 'fwhm':41.6 , 'sensitivity':19.91, 'sigma_alpha':1.09, 'name':'L068a'},
+                       {'telescope':'LFT', 'nu':68. , 'delta':16. , 'fwhm':47.1 , 'sensitivity':31.77, 'sigma_alpha':35.9, 'name':'L068b'},
+                       {'telescope':'LFT', 'nu':78. , 'delta':18. , 'fwhm':36.9 , 'sensitivity':15.55, 'sigma_alpha':8.6 , 'name':'L078a'},
+                       {'telescope':'LFT', 'nu':78. , 'delta':18. , 'fwhm':43.8 , 'sensitivity':19.13, 'sigma_alpha':13.0, 'name':'L078b'},
+                       {'telescope':'LFT', 'nu':89. , 'delta':20. , 'fwhm':33.0 , 'sensitivity':12.28, 'sigma_alpha':5.4 , 'name':'L089a'},
+                       {'telescope':'LFT', 'nu':89. , 'delta':20. , 'fwhm':41.5 , 'sensitivity':28.77, 'sigma_alpha':29.4, 'name':'L089b'},
+                       {'telescope':'LFT', 'nu':100., 'delta':23. , 'fwhm':30.2 , 'sensitivity':10.34, 'sigma_alpha':3.8 , 'name':'L100' },
+                       {'telescope':'MFT', 'nu':100., 'delta':23. , 'fwhm':37.8 , 'sensitivity':8.48 , 'sigma_alpha':2.6 , 'name':'M100' },
+                       {'telescope':'LFT', 'nu':119., 'delta':36. , 'fwhm':26.3 , 'sensitivity':7.69 , 'sigma_alpha':2.1 , 'name':'L119' },
+                       {'telescope':'MFT', 'nu':119., 'delta':36. , 'fwhm':33.6 , 'sensitivity':5.70 , 'sigma_alpha':1.2 , 'name':'M119' },
+                       {'telescope':'LFT', 'nu':140., 'delta':42. , 'fwhm':23.7 , 'sensitivity':7.25 , 'sigma_alpha':1.8 , 'name':'L140' },
+                       {'telescope':'MFT', 'nu':140., 'delta':42. , 'fwhm':30.8 , 'sensitivity':6.38 , 'sigma_alpha':1.5 , 'name':'M140' },
+                       {'telescope':'MFT', 'nu':166., 'delta':50. , 'fwhm':28.9 , 'sensitivity':5.57 , 'sigma_alpha':1.1 , 'name':'M166' },
+                       {'telescope':'MFT', 'nu':195., 'delta':59. , 'fwhm':28.0 , 'sensitivity':7.05 , 'sigma_alpha':1.8 , 'name':'M195' },
+                       {'telescope':'HFT', 'nu':195., 'delta':59. , 'fwhm':28.6 , 'sensitivity':10.50, 'sigma_alpha':3.9 , 'name':'H195' },
+                       {'telescope':'HFT', 'nu':235., 'delta':71. , 'fwhm':24.7 , 'sensitivity':10.79, 'sigma_alpha':4.1 , 'name':'H235' },
+                       {'telescope':'HFT', 'nu':280., 'delta':84. , 'fwhm':22.5 , 'sensitivity':13.80, 'sigma_alpha':6.8 , 'name':'H280' },
+                       {'telescope':'HFT', 'nu':337., 'delta':101., 'fwhm':20.9 , 'sensitivity':21.95, 'sigma_alpha':17.1, 'name':'H337' },
+                       {'telescope':'HFT', 'nu':402., 'delta':92. , 'fwhm':17.9 , 'sensitivity':47.45, 'sigma_alpha':80.0, 'name':'H402' },
                        ])
                        
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -152,51 +152,27 @@ plt.clf()
 
 #Producing maps affected by the HWP, channel by channel.
 
-for i in np.arange(len(chan_dicts)):
-    channel_IMO = chan_dicts[i]['telescope']
+for i in np.arange(nkey):
+    name = chan_dicts[i]['name']
+    telescope = chan_dicts[i]['telescope']
     
-    if channel_IMO[0] == 'LFT':
+    if telescope == 'LFT':
         freqs = freqs_LFT 
         muellers = M_LFT
+        c_string = 'crimson'
     
-    if channel_IMO[0] == 'MFT':
+    if telescope == 'MFT':
         freqs = freqs_MFT 
         muellers = M_MFT
+        c_string = 'purple'
         
-    if channel_IMO[0] == 'HFT':
+    if telescope == 'HFT':
         freqs = freqs_HFT 
         muellers = M_HFT
-    
-    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    # looking for the detectors belonging to the selected channel
-    for j in range(nkey):
-        test = data_files[j]
-        if(test['name'] == 'channel_info'):
-            metadata = test['metadata']
-            if(metadata['channel'] == channel_IMO):
-                detector_names = metadata['detector_names']
-                break
+        c_string = 'mediumslateblue'
 
-    nIMO = len(detector_names)
-    det_indices = range(nIMO)
-
-    list_of_dictionaries = []
-
-    # looking for the metadata of the detectors in detector_names
-    for d in detector_names:
-        for j in range(nkey):
-            test = data_files[j]
-            if(test['name'] == 'detector_info'):
-                metadata = test['metadata']
-                if (metadata['name'] == d):
-                    list_of_dictionaries.append(metadata)
-                    break
-                    
-    bandcenter = list_of_dictionaries[0]['bandcenter_ghz']*1e9 #[Hz]
-    bandwidth = list_of_dictionaries[0]['bandwidth_ghz']*1e9   #[Hz]
-    
-    fmin = bandcenter - bandwidth/2
-    fmax = bandcenter + bandwidth/2
+    bandcenter = chan_dicts[i]['nu']*1e9   #[Hz]
+    bandwidth = chan_dicts[i]['delta']*1e9 #[Hz]
 
     bandidx = np.where((freqs >= fmin) & (freqs <= fmax))
     freqs_channel = freqs[bandidx]
@@ -254,7 +230,7 @@ for i in np.arange(len(chan_dicts)):
     
     maps_sky_ch = maps_CMB_ch + maps_dust_ch + maps_sync_ch
     
-    hp.write_map('output_'+str(NSIDE)+'/maps_'+channel_IMO, maps_sky_ch, overwrite=True, dtype=['float64','float64','float64'])
-    print('channel '+str(channel_IMO)+' done.')
+    hp.write_map('output_'+str(NSIDE)+'/maps_'+name, maps_sky_ch, overwrite=True, dtype=['float64','float64','float64'])
+    print('channel '+name+' done.')
 
-print('it took ' + str((time.time()-start)/60) + ' minutes at NSIDE ' + str(NSIDE))
+print('it took ' + str((time.time()-start)) + ' seconds at NSIDE ' + str(NSIDE))
