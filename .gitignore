@@ -3,4 +3,5 @@ intermediate/
 output*
 *.ipynb
 *.pdf
+*.npy
 random_CMB*

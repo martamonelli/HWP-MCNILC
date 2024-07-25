@@ -1,3 +1,8 @@
+'''
+Here I compare the maps obtained by beam-smoothing first and then applying the HWP,
+with the maps obtained by applying the HWP first and then beam-smoothing.
+'''
+
 import numpy as np
 import healpy as hp
 
@@ -24,9 +29,9 @@ start = time.time()
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # main input parameters
-HWP = 'realistic' 		#HWP type, can be 'ideal' or 'realistic'
-dust_model = 'd1'	#PySM model for dust
-sync_model = 's1'	#PySM model for synchrotron
+HWP = 'ideal' 		#HWP type, can be 'ideal' or 'realistic'
+dust_model = 'd0'	#PySM model for dust
+sync_model = 's0'	#PySM model for synchrotron
 NSIDE = 64		#nside
 nreal = 100		#number of realizations
 r = 0.00461 		#tensor-to-scalar ratio
@@ -35,11 +40,11 @@ skymodel = dust_model + sync_model
 
 np.random.seed(0) #FIXME: eventually remove
 
-if not os.path.exists('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP):
-    os.mkdir('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP)
-    os.mkdir('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/noise-only')
-    os.mkdir('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/FG-only')
-    os.mkdir('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/coadded')
+if not os.path.exists(skymodel+'_'+str(NSIDE)+'_'+HWP):
+    os.mkdir(skymodel+'_'+str(NSIDE)+'_'+HWP)
+    os.mkdir(skymodel+'_'+str(NSIDE)+'_'+HWP+'/noise-only')
+    os.mkdir(skymodel+'_'+str(NSIDE)+'_'+HWP+'/FG-only')
+    os.mkdir(skymodel+'_'+str(NSIDE)+'_'+HWP+'/coadded')
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -99,7 +104,7 @@ CAMB = powers['tensor']
 Dls = np.array([CAMB[:,0], CAMB[:,1], CAMB[:,2], CAMB[:,3]])
 Cls_tensor = Dls[:,:lmax+1]*D2C
   
-Cls_CMB = Cls_scalar + r*Cls_tensor   
+Cls_CMB = Cls_scalar + r*Cls_tensor              
 
 # prepare PySM skies for dust and synchrotron
 dust_sky = pysm3.Sky(nside=NSIDE, preset_strings=[dust_model])
@@ -134,77 +139,6 @@ chan_dicts = np.array([{'telescope':'LFT', 'nu':40. , 'delta':12. , 'fwhm':70.5 
                        
 # counting how many objects are in data_files
 nkey = len(chan_dicts)
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-# plotting the Mueller matrix elements channel by channel:
-fig, axs = plt.subplots(3, 3)
-cmap = matplotlib.cm.get_cmap('magma')
-            
-for s1 in np.arange(3):
-    for s2 in np.arange(3):
-        axs[s1,s2].axhline(default[s1,s2],color='gray', linestyle='--') 
-
-for i in np.arange(nkey):
-    telescope = chan_dicts[i]['telescope']
-    
-    if telescope == 'LFT':
-        freqs = freqs_LFT 
-        muellers = M_LFT
-        c_string = cmap(0.44)
-    
-    if telescope == 'MFT':
-        freqs = freqs_MFT 
-        muellers = M_MFT
-        c_string = cmap(0.65)
-        
-    if telescope == 'HFT':
-        freqs = freqs_HFT 
-        muellers = M_HFT
-        c_string = cmap(0.85)
-
-    bandcenter = chan_dicts[i]['nu']*1e9   #[Hz]
-    bandwidth = chan_dicts[i]['delta']*1e9 #[Hz]
-    
-    fmin = bandcenter - bandwidth/2
-    fmax = bandcenter + bandwidth/2
-
-    bandidx = np.where((freqs >= fmin) & (freqs <= fmax))
-    freqs_channel = freqs[bandidx]
-    fmin_ch = freqs_channel[:-1]
-    fmax_ch = freqs_channel[1:]
-    
-    def label_cond(string):
-        label = ''
-        if i in [0,10,18]:
-            label = string
-        return label
-    
-    for s1 in np.arange(3):
-        for s2 in np.arange(3):
-            axs[s1,s2].plot(freqs_channel*1e-9,muellers[bandidx,s1,s2][0],color=c_string,label=label_cond(telescope))
-            axs[s1,s2].tick_params(direction='in')
-            axs[s1,s2].set_xticks([100,200,300,400])
-            if s1 != 3:
-                axs[s1,s2].set_xticklabels(['', '', '', ''])
-            ymin = np.array(axs[s1,s2].get_ylim())[0]
-            ymax = np.array(axs[s1,s2].get_ylim())[1]
-            ymean = np.mean([ymin,ymax])
-            axs[s1,s2].set_yticks([ymean+(ymin-ymean)*2/3,ymean+(ymax-ymean)*2/3])
-            axs[s1,s2].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-            axs[s1,s2].tick_params(color='gray', labelcolor='gray')
-            for spine in axs[s1,s2].spines.values():
-                spine.set_edgecolor('gray')
-
-axs[2,1].set_xlabel(r'Frequency [GHz]', labelpad=5)
-axs[1,0].set_ylabel(r'HWP Mueller matrix elements', labelpad=5)
-axs[2,2].legend (loc='upper right')
-
-fig.set_size_inches(6, 4)
-plt.tight_layout(pad=0.3)
-fig.subplots_adjust(wspace=0.35)
-plt.savefig('output/mueller.pdf')
-plt.clf()
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -281,97 +215,51 @@ for i in np.arange(nkey):
     del(U_sync_ch)
     
     # apply beam smoothing to FG-only maps
-    maps_FG_ch = hp.smoothing(maps_dust_ch + maps_sync_ch, fwhm=fwhm_radians, lmax=lmax)  
+    maps_FG_ch_12 = hp.smoothing(maps_dust_ch + maps_sync_ch, fwhm=fwhm_radians, lmax=lmax)  
+    
+    ###################
+    
+    dust_maps = np.empty((len(freqs_channel),3,NPIX))
+    sync_maps = np.empty((len(freqs_channel),3,NPIX))
+    
+    for j in np.arange(len(freqs_channel)):
+        freq = freqs_channel[j]
+        dust_maps[j] = hp.smoothing(dust_sky.get_emission(freq*u.Hz).to(getattr(u,'uK_CMB'),equivalencies=u.cmb_equivalencies(freq*u.Hz)), fwhm=fwhm_radians, lmax=lmax)  
+        sync_maps[j] = hp.smoothing(sync_sky.get_emission(freq*u.Hz).to(getattr(u,'uK_CMB'),equivalencies=u.cmb_equivalencies(freq*u.Hz)), fwhm=fwhm_radians, lmax=lmax)  
+    
+    # apply HWP to dust maps
+    I_dust_ch = np.einsum('ij,i->j',dust_maps[:-1,0,:],mIIs[:-1]) + np.einsum('ij,i->j',dust_maps[1:,0,:],mIIs[1:])
+    Q_dust_ch = np.einsum('ij,i->j',dust_maps[:-1,1,:],rho[:-1]) + np.einsum('ij,i->j',dust_maps[1:,1,:],rho[1:]) \
+                + np.einsum('ij,i->j',dust_maps[:-1,2,:],eta[:-1]) + np.einsum('ij,i->j',dust_maps[1:,2,:],eta[1:])
+    U_dust_ch = np.einsum('ij,i->j',dust_maps[:-1,2,:],rho[:-1]) + np.einsum('ij,i->j',dust_maps[1:,2,:],rho[1:]) \
+                - np.einsum('ij,i->j',dust_maps[:-1,1,:],eta[:-1]) - np.einsum('ij,i->j',dust_maps[1:,1,:],eta[1:])
+    maps_dust_ch = np.array([I_dust_ch,Q_dust_ch,U_dust_ch])/(2*(len(freqs_channel)-1))
+    del(I_dust_ch)
+    del(Q_dust_ch)
+    del(U_dust_ch)
+    
+    # apply HWP to synchrotron maps    
+    I_sync_ch = np.einsum('ij,i->j',sync_maps[:-1,0,:],mIIs[:-1]) + np.einsum('ij,i->j',sync_maps[1:,0,:],mIIs[1:])
+    Q_sync_ch = np.einsum('ij,i->j',sync_maps[:-1,1,:],rho[:-1]) + np.einsum('ij,i->j',sync_maps[1:,1,:],rho[1:]) \
+                + np.einsum('ij,i->j',sync_maps[:-1,2,:],eta[:-1]) + np.einsum('ij,i->j',sync_maps[1:,2,:],eta[1:])
+    U_sync_ch = np.einsum('ij,i->j',sync_maps[:-1,2,:],rho[:-1]) + np.einsum('ij,i->j',sync_maps[1:,2,:],rho[1:]) \
+                - np.einsum('ij,i->j',sync_maps[:-1,1,:],eta[:-1]) - np.einsum('ij,i->j',sync_maps[1:,1,:],eta[1:])
+    maps_sync_ch = np.array([I_sync_ch,Q_sync_ch,U_sync_ch])/(2*(len(freqs_channel)-1))
+    del(I_sync_ch)
+    del(Q_sync_ch)
+    del(U_sync_ch)
+    
+    maps_FG_ch_21 = maps_dust_ch + maps_sync_ch
+    
+    diff = maps_FG_ch_21 - maps_FG_ch_12
+    
+    print('T diff between '+str(min(diff[0]))+' and '+str(max(diff[0])))
+    print('Q diff between '+str(min(diff[1]))+' and '+str(max(diff[1])))
+    print('U diff between '+str(min(diff[2]))+' and '+str(max(diff[2])))
        
-    # save FG-only maps
-    hp.write_map('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/FG-only/maps_'+name, maps_FG_ch, overwrite=True, dtype=['float64','float64','float64'])
-    
-    # prepare noise angular power spectra     
-    sensitivity = chan_dicts[i]['sensitivity']
-    Nls = np.zeros_like(Cls_CMB)
-    Nls[0] = np.ones(lmax+1)*(np.pi*sensitivity/10800)**2/2 # this should be okay
-    Nls[1] = np.ones(lmax+1)*(np.pi*sensitivity/10800)**2   # this should be okay
-    Nls[2] = np.ones(lmax+1)*(np.pi*sensitivity/10800)**2   # this should be okay
-    
-    # starting loop over all the realizations
-    for k in np.arange(nreal):
-        if not os.path.exists('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/noise-only/'+f"{k:02}"):
-            os.mkdir('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/noise-only/'+f"{k:02}")
-        if not os.path.exists('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/coadded/'+f"{k:02}"):
-            os.mkdir('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/coadded/'+f"{k:02}")
-        
-        # produce CMB-only maps
-        CMB_maps = hp.synfast(Cls_CMB, NSIDE, lmax, new=True)
-        
-        # apply HWP
-        I_CMB_ch = np.sum(mIIs[:-1] + mIIs[1:])*CMB_maps[0]
-        Q_CMB_ch = np.sum(rho[:-1] + rho[1:])*CMB_maps[1] + np.sum(eta[:-1] + eta[1:])*CMB_maps[2]
-        U_CMB_ch = np.sum(rho[:-1] + rho[1:])*CMB_maps[2] - np.sum(eta[:-1] + eta[1:])*CMB_maps[1]
-        maps_CMB_ch = np.array([I_CMB_ch,Q_CMB_ch,U_CMB_ch])/(2*(len(freqs_channel)-1))       
-        del(I_CMB_ch)
-        del(Q_CMB_ch)
-        del(U_CMB_ch)
-        
-        # apply beam smoothing to CMB-only maps
-        maps_CMB_ch = hp.smoothing(maps_CMB_ch, fwhm=fwhm_radians, lmax=lmax)
-        
-        # produce noise maps        
-        maps_noise_ch = hp.synfast(Nls, NSIDE, lmax, new=True)
-        
-        # save noise-only maps
-        hp.write_map('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/noise-only/'+f"{k:02}"+'/maps_'+name, maps_noise_ch, overwrite=True, dtype=['float64','float64','float64'])
-        
-        # save coadded maps
-        maps_coadd_ch = maps_CMB_ch + maps_noise_ch + maps_FG_ch
-        hp.write_map('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/coadded/'+f"{k:02}"+'/maps_'+name, maps_coadd_ch, overwrite=True, dtype=['float64','float64','float64'])
-    
     print('channel '+name+' done.')
 
-print('it took ' + str((time.time()-start)) + ' seconds for ' + str(nreal) + ' realizations at NSIDE ' + str(NSIDE))
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# plotting the returned Cls (coadded - FG - noise) for testing purposes
-
-fig, axs = plt.subplots(3,2)
-fig.set_size_inches(8, 5.5)
-
-# reading the maps we have just saved
-for i in np.arange(nkey):
-    name = chan_dicts[i]['name']
-    
-    c_string = cmap(i/nkey)
-    
-    Cls = np.zeros((6,lmax+1))
-    
-    # starting loop over all the realizations
-    for k in np.arange(nreal):
-        maps_coadd_ch = hp.read_map('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/coadded/'+f"{k:02}"+'/maps_'+name, field=(0,1,2))  
-        maps_noise_ch = hp.read_map('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/noise-only/'+f"{k:02}"+'/maps_'+name, field=(0,1,2))  
-        maps_FG_ch = hp.read_map('output/'+skymodel+'_'+str(NSIDE)+'_'+HWP+'/FG-only/maps_'+name, field=(0,1,2))      
-        Cls += hp.anafast(maps_coadd_ch-maps_FG_ch-maps_noise_ch, lmax=lmax)
-    
-    # plot averaged Dls    
-    axs[0,0].plot(ell, Cls[0,2:]*C2D/nreal, color=c_string)
-    axs[1,0].plot(ell, Cls[1,2:]*C2D/nreal, color=c_string)
-    axs[2,0].plot(ell, Cls[2,2:]*C2D/nreal, color=c_string)
-    axs[0,1].plot(ell, Cls[3,2:]*C2D/nreal, color=c_string)
-    axs[1,1].plot(ell, Cls[4,2:]*C2D/nreal, color=c_string)
-    axs[2,1].plot(ell, Cls[5,2:]*C2D/nreal, color=c_string)
-
-# plot input CMB Cls    
-axs[0,0].plot(ell, Cls_CMB[0,2:]*C2D, color='black', linestyle='--')
-axs[1,0].plot(ell, Cls_CMB[1,2:]*C2D, color='black', linestyle='--')
-axs[2,0].plot(ell, Cls_CMB[2,2:]*C2D, color='black', linestyle='--')
-axs[0,1].plot(ell, Cls_CMB[3,2:]*C2D, color='black', linestyle='--')
-
-axs[0,0].set_xticklabels([])
-axs[1,0].set_xticklabels([])
-axs[2,0].set_xlabel(r'$\ell$')
-axs[0,1].set_xticklabels([])
-axs[1,1].set_xticklabels([])
-axs[2,1].set_xlabel(r'$\ell$')
-axs[1,0].set_ylabel(r'$D_\ell^{XY}$ [$\mu$K$^2$]')
-
-fig.tight_layout()
-
-plt.savefig('output/Cls.png')    
+hp.mollview(maps_FG_ch_21[0])
+hp.mollview(maps_FG_ch_21[1])
+hp.mollview(maps_FG_ch_21[2])
+plt.show()
